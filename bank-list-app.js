@@ -76,14 +76,22 @@ const printBalance=movements=>{
 }
 console.log(printBalance(account1.movements));
 
+
 const displaySummery=movements=>{
+  // deposit
   const income=movements.filter(mov=>mov > 0).reduce((acc, mov)=>acc+mov, 0);
   labelSumIn.textContent=`${income} $`;
+
+  // withdraw
+  const withdraw=movements.filter(mov=>mov < 0).reduce((acc, mov)=>acc+mov, 0);
+  labelSumOut.textContent=`${Math.abs(withdraw)} $`;
+
+  // interest
 };
 displaySummery(account1.movements);
 
 
-// deposit
+
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
