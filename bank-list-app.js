@@ -87,6 +87,9 @@ const displaySummery=movements=>{
   labelSumOut.textContent=`${Math.abs(withdraw)} $`;
 
   // interest
+  const interest=movements.filter(mov=>mov > 0).map(deposit=>deposit*1.2/100).reduce((acc,int)=>acc+int, 0);
+  // console.log(interest);
+  labelSumInterest.textContent=`${interest} $`
 };
 displaySummery(account1.movements);
 
