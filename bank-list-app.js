@@ -38,7 +38,7 @@ const labelSumInterest = document.querySelector(".summary__value--interest");
 const labelTimer = document.querySelector(".timer");
 
 const containerApp = document.querySelector(".app");
-const containerMovements = document.querySelector(".movements");
+const transactionContainer = document.querySelector(".movements");
 
 const btnLogin = document.querySelector(".login__btn");
 const btnTransfer = document.querySelector(".form__btn--transfer");
@@ -54,8 +54,8 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
-const displayMovements = (movements) => {
-  containerMovements.innerHTML='';
+const displayMovements = movements => {
+  transactionContainer.innerHTML='';
   movements.forEach((mov, i) => {
     const type= mov > 0 ? 'deposit':'withdrawal';
     const html = `
@@ -64,11 +64,26 @@ const displayMovements = (movements) => {
           <div class="movements__value">${mov}</div>
         </div>
       `;
-      containerMovements.insertAdjacentHTML('beforeend', html);
+      transactionContainer.insertAdjacentHTML('beforeend', html);
   });
 };
 displayMovements(account1.movements);
-console.log(containerMovements.innerHTML);
+// console.log(transactionContainer.innerHTML);
+
+const printBalance=movements=>{
+  const balance=movements.reduce((acc,mov)=>acc+mov, 0);
+  labelBalance.textContent=`${balance} $`;
+}
+console.log(printBalance(account1.movements));
+
+const displaySummery=movements=>{
+  const income=movements.filter(mov=>mov > 0).reduce((acc, mov)=>acc+mov, 0);
+  labelSumIn.textContent=`${income} $`;
+};
+displaySummery(account1.movements);
+
+
+// deposit
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
