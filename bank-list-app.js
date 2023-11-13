@@ -72,29 +72,30 @@ const displayMovements = (movements) => {
 
 // console.log(transactionContainer.innerHTML);
 
-const printBalance = (movements) => {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${balance} $`;
+const printBalance = (acc) => {
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
+  
+  labelBalance.textContent = `${acc.balance} $`;
 };
 
 
-const displaySummery = (movements) => {
+const displaySummery = (acc) => {
   // deposit
-  const income = movements
+  const income = acc.movements
     .filter((mov) => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumIn.textContent = `${income} $`;
 
   // withdraw
-  const withdraw = movements
+  const withdraw = acc.movements
     .filter((mov) => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumOut.textContent = `${Math.abs(withdraw)} $`;
 
   // interest
-  const interest = movements
+  const interest = acc.movements
     .filter((mov) => mov > 0)
-    .map((deposit) => (deposit * 1.2) / 100)
+    .map((deposit) => (deposit * acc.interestRate) / 100)
     .filter((int, i, arr) => {
       console.log(arr);
       return int >= 1;
@@ -116,8 +117,16 @@ const createUsername = (acc) => {
 };
 createUsername(accounts);
 
+// updateUI
+const updateUI=(acc)=>{
+  displayMovements(acc.movements);
+  printBalance(acc);
+  displaySummery(acc);
+}
+
 // login event
 let currentAccount;
+console.log('current account=', currentAccount);
 btnLogin.addEventListener("click", (e) => {
   // prevent form reload
   e.preventDefault();
@@ -130,10 +139,33 @@ btnLogin.addEventListener("click", (e) => {
   };
   containerApp.style.opacity=100;
   displayMovements(currentAccount.movements);
-  printBalance(currentAccount.movements);
-  displaySummery(currentAccount.movements);
+  printBalance(currentAccount);
+  displaySummery(currentAccount);
+
+  // clear login field
+  inputLoginUsername.value=inputLoginPin.value='';
+  inputLoginPin.blur();
+  updateUI(currentAccount);
 });
 
+
+btnTransfer.addEventListener('click',(e)=>{
+  e.preventDefault();
+  const amount= Number(inputTransferAmount.value);
+  const receiver=accounts.find(acc=>acc.username===inputTransferTo.value);
+  console.log(amount, receiver);
+
+  if(amount > 0 && receiver && currentAccount.balance >= amount && receiver?.username !== currentAccount.username){
+    // console.log('Transfer valid');
+    currentAccount.movements.push(-amount);
+    receiver.movements.push(amount);
+
+    // update UI
+    updateUI(currentAccount);
+  }else{
+    console.log('Transfer not valid')
+  }
+})
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
