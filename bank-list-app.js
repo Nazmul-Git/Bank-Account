@@ -54,9 +54,12 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
-const displayMovements = (movements) => {
+const displayMovements = (movements, sort=false) => { 
   transactionContainer.innerHTML = "";
-  movements.forEach((mov, i) => {
+  
+  const movs=sort ? movements.slice().sort((a,b)=>a-b) : movements;
+
+  movs.forEach((mov, i) => {
     const type = mov > 0 ? "deposit" : "withdrawal";
     const html = `
       <div class="movements__row">
@@ -168,6 +171,17 @@ btnTransfer.addEventListener('click',(e)=>{
   }
 });
 
+btnLoan.addEventListener('click',(e)=>{
+  e.preventDefault();
+  const amount=Number(inputLoanAmount.value);
+  if(amount > 0 && currentAccount.movements.some(mov=>mov >= amount * 0.1)){
+    currentAccount.movements.push(amount);
+
+    // update UI
+    updateUI(currentAccount);
+  }
+})
+
 btnClose.addEventListener('click', (e)=>{
   e.preventDefault();
 
@@ -187,8 +201,45 @@ btnClose.addEventListener('click', (e)=>{
 
   inputCloseUsername.value=inputClosePin.value='';
 })
+
+// SORT
+let sorted=false
+btnSort.addEventListener('click', e => {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
+})
+
+
+
+
+
+
+
+
+
+
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
+
+// RUN IN CONSOLE
+
+// flat()
+const accountMovement=accounts.map(acc=>acc.movements);
+console.log(accountMovement);
+const allMovement=accountMovement.flat();
+console.log(allMovement);
+const overallBalance=allMovement.reduce((acc, mov)=>acc+mov, 0);
+console.log(overallBalance); //17840
+
+//we can write short cut
+const overallBalance2=accounts.map(acc=>acc.movements).flat().reduce((acc, mov)=>acc + mov, 0);
+console.log(overallBalance2); //17840
+
+// flatMap()
+const overallBalance3= accounts.flatMap(acc=>acc.movements).reduce((acc, mov)=>acc + mov, 0);
+console.log(overallBalance3); //17840
 
 /////////////////////////////////////////////////
